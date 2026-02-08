@@ -31,7 +31,7 @@ export default function Home() {
           </div>
           <div>
             <p className="font-display text-lg font-semibold">සවාරිය</p>
-            <p className="text-xs text-[color:var(--muted)]">Sawariya</p>
+            <p className="text-xs text-(--muted)">Sawariya</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -40,7 +40,7 @@ export default function Home() {
         </div>
       </nav>
 
-      <main className="mx-auto flex w-full max-w-[1440px] flex-col px-4 pt-8 sm:px-8 lg:px-12">
+      <main className="mx-auto flex w-full max-w-360 flex-col px-4 pt-8 sm:px-8 lg:px-12">
         <section className="hero-shell">
           <div className="hero-map">
             <MapComponent
@@ -57,7 +57,7 @@ export default function Home() {
         <section className="mt-10">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--muted)]">
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-(--muted)">
                 {strings.itinerary}
               </p>
               <h2 className="font-display text-2xl font-semibold">
@@ -74,7 +74,7 @@ export default function Home() {
           </div>
           <div className="route-scroll mt-6 flex gap-4 overflow-x-auto pb-6">
             {locations.length === 0 ? (
-              <div className="glass-panel w-full rounded-2xl p-6 text-sm text-[color:var(--muted)]">
+              <div className="glass-panel w-full rounded-2xl p-6 text-sm text-(--muted)">
                 {strings.noStops}
               </div>
             ) : (
@@ -88,7 +88,7 @@ export default function Home() {
                     </div>
                     <div className="route-card__box">
                       <div className="route-card__content">
-                        <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-[color:var(--muted)]">
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-(--muted)">
                           {strings.stopLabel} {index + 1}
                         </p>
                         <p className="route-card__title">{location.name}</p>
@@ -174,7 +174,7 @@ export default function Home() {
           }}
         />
 
-        <footer className="mt-14 rounded-[32px] border border-black/10 bg-black px-6 py-8 text-center text-sm text-white sm:px-10">
+        <footer className="mt-14 rounded-4xl border border-black/10 bg-black px-6 py-8 text-center text-sm text-white sm:px-10">
           <p className="flex items-center justify-center gap-2">
             <Heart className="h-4 w-4 text-rose-400" />
             <span>

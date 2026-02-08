@@ -332,12 +332,10 @@ export const AIPlannerCard = ({
     <div className="glass-card rounded-3xl p-6 sm:p-8">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h3 className="font-display text-2xl font-semibold text-[color:var(--foreground)]">
+          <h3 className="font-display text-2xl font-semibold text-foreground">
             {strings.aiPlannerTitle}
           </h3>
-          <p className="text-sm text-[color:var(--muted)]">
-            {strings.aiPlannerSubtitle}
-          </p>
+          <p className="text-sm text-(--muted)">{strings.aiPlannerSubtitle}</p>
         </div>
         <Sparkles className="h-7 w-7 text-emerald-500" />
       </div>
@@ -377,17 +375,17 @@ export const AIPlannerCard = ({
       ) : null}
 
       {locations.length < 2 && !result ? (
-        <div className="mt-6 rounded-2xl border border-dashed border-slate-200 bg-white/70 p-6 text-sm text-[color:var(--muted)]">
+        <div className="mt-6 rounded-2xl border border-dashed border-slate-200 bg-white/70 p-6 text-sm text-(--muted)">
           {strings.aiPlannerEmpty}
         </div>
       ) : null}
 
       {!result && !isPending && locations.length >= 2 ? (
         <div className="mt-6 rounded-2xl border border-white/70 bg-white/70 p-6 text-sm">
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--muted)]">
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-(--muted)">
             {strings.aiPlannerSubtitle}
           </p>
-          <p className="mt-3 text-lg font-semibold text-[color:var(--foreground)]">
+          <p className="mt-3 text-lg font-semibold text-foreground">
             {rotatingTexts[rotateIndex]}
           </p>
         </div>
@@ -402,32 +400,26 @@ export const AIPlannerCard = ({
       ) : null}
 
       {result ? (
-        <div className="mt-6 grid gap-5 text-sm text-[color:var(--foreground)]">
+        <div className="mt-6 grid gap-5 text-sm text-foreground">
           {routeSummary ? (
             <div className="grid gap-3 sm:grid-cols-3">
               <div className="rounded-2xl border border-white/70 bg-white/70 p-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--muted)]">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-(--muted)">
                   Start
                 </p>
-                <p className="mt-2 text-[color:var(--foreground)]">
-                  {routeSummary.start}
-                </p>
+                <p className="mt-2 text-foreground">{routeSummary.start}</p>
               </div>
               <div className="rounded-2xl border border-white/70 bg-white/70 p-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--muted)]">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-(--muted)">
                   Stops
                 </p>
-                <p className="mt-2 text-[color:var(--foreground)]">
-                  {routeSummary.count}
-                </p>
+                <p className="mt-2 text-foreground">{routeSummary.count}</p>
               </div>
               <div className="rounded-2xl border border-white/70 bg-white/70 p-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--muted)]">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-(--muted)">
                   End
                 </p>
-                <p className="mt-2 text-[color:var(--foreground)]">
-                  {routeSummary.end}
-                </p>
+                <p className="mt-2 text-foreground">{routeSummary.end}</p>
               </div>
             </div>
           ) : null}
@@ -492,10 +484,10 @@ export const AIPlannerCard = ({
           </div>
 
           <div className="rounded-2xl border border-white/70 bg-white/70 p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--muted)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-(--muted)">
               {strings.travelTimeLabel}
             </p>
-            <p className="mt-2 text-[color:var(--foreground)]">
+            <p className="mt-2 text-foreground">
               {isTravelLoading || totalTravelMinutes === null
                 ? strings.travelLoadingLabel
                 : `${totalTravelMinutes} ${strings.minutesShort}`}
@@ -504,32 +496,30 @@ export const AIPlannerCard = ({
 
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="rounded-2xl border border-white/70 bg-white/70 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--muted)]">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-(--muted)">
                 {strings.totalTripTimeLabel}
               </p>
-              <p className="mt-2 text-[color:var(--foreground)]">
+              <p className="mt-2 text-foreground">
                 {totalTripMinutes === null
                   ? strings.totalTripLoadingLabel
                   : `${totalTripMinutes} ${strings.minutesShort}`}
               </p>
             </div>
             <div className="rounded-2xl border border-white/70 bg-white/70 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--muted)]">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-(--muted)">
                 {strings.bestStartTimeLabel}
               </p>
-              <p className="mt-2 text-[color:var(--foreground)]">
+              <p className="mt-2 text-foreground">
                 {bestStartTime ?? strings.totalTripLoadingLabel}
               </p>
             </div>
           </div>
 
           <div className="rounded-2xl border border-white/70 bg-white/70 p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--muted)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-(--muted)">
               {strings.stayAreaLabel}
             </p>
-            <p className="mt-2 text-[color:var(--foreground)]">
-              {result.stayArea}
-            </p>
+            <p className="mt-2 text-foreground">{result.stayArea}</p>
           </div>
         </div>
       ) : null}

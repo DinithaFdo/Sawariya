@@ -12,14 +12,19 @@ export const Preloader = () => {
     if (typeof window === "undefined") return;
     const hasLoaded = localStorage.getItem(STORAGE_KEY);
     if (hasLoaded) return;
-    setVisible(true);
+    const raf = window.requestAnimationFrame(() => {
+      setVisible(true);
+    });
 
     const timeout = window.setTimeout(() => {
       localStorage.setItem(STORAGE_KEY, "true");
       setVisible(false);
     }, 1600);
 
-    return () => window.clearTimeout(timeout);
+    return () => {
+      window.clearTimeout(timeout);
+      window.cancelAnimationFrame(raf);
+    };
   }, []);
 
   if (!visible) return null;

@@ -18,7 +18,7 @@ export const MapComponent = ({
       dynamic(() => import("@/components/MapClient"), {
         ssr: false,
         loading: () => (
-          <div className="flex h-full min-h-[320px] items-center justify-center text-sm text-slate-500">
+          <div className="flex h-full min-h-80 items-center justify-center text-sm text-slate-500">
             {loadingLabel}
           </div>
         ),

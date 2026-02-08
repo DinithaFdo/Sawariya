@@ -67,10 +67,12 @@ export const TripProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const stored = readStoredTrip();
     if (stored) {
-      setLanguage(stored.language);
-      setTheme(stored.theme);
-      setLocations(stored.locations);
-      setAiPlan(stored.aiPlan);
+      queueMicrotask(() => {
+        setLanguage(stored.language);
+        setTheme(stored.theme);
+        setLocations(stored.locations);
+        setAiPlan(stored.aiPlan);
+      });
     }
     hydratedRef.current = true;
   }, []);

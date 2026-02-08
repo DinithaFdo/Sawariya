@@ -28,12 +28,7 @@ export const SearchBar = () => {
   );
 
   useEffect(() => {
-    if (query.trim().length < 2) {
-      setResults([]);
-      setIsLoading(false);
-      return;
-    }
-
+    if (query.trim().length < 2) return;
     const controller = new AbortController();
     const handle = window.setTimeout(async () => {
       setIsLoading(true);
@@ -75,11 +70,19 @@ export const SearchBar = () => {
       <form className="flex flex-col gap-3 sm:flex-row" onSubmit={handleSubmit}>
         <label className="relative flex-1">
           <span className="sr-only">{strings.searchPlaceholder}</span>
-          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--muted)]" />
+          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-(--muted)" />
           <input
             value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            className="w-full rounded-full border border-white/60 bg-white/90 py-3 pl-11 pr-4 text-sm text-[color:var(--foreground)] shadow-[0_18px_35px_rgba(15,23,42,0.15)] outline-none transition focus:ring-2 focus:ring-black/30"
+            onChange={(event) => {
+              const value = event.target.value;
+              setQuery(value);
+              if (value.trim().length < 2) {
+                setResults([]);
+                setActiveIndex(0);
+                setIsLoading(false);
+              }
+            }}
+            className="w-full rounded-full border border-white/60 bg-white/90 py-3 pl-11 pr-4 text-sm text-foreground shadow-[0_18px_35px_rgba(15,23,42,0.15)] outline-none transition focus:ring-2 focus:ring-black/30"
             placeholder={strings.searchPlaceholder}
           />
         </label>
@@ -92,7 +95,7 @@ export const SearchBar = () => {
       </form>
 
       {query.length > 1 && (
-        <div className="glass-panel absolute z-50 mt-3 w-full rounded-2xl p-2 text-sm text-[color:var(--foreground)] shadow-xl">
+        <div className="glass-panel absolute z-50 mt-3 w-full rounded-2xl p-2 text-sm text-foreground shadow-xl">
           {isLoading ? (
             <div className="space-y-2 px-3 py-2">
               {[0, 1, 2].map((item) => (
@@ -120,7 +123,7 @@ export const SearchBar = () => {
               })}
             </ul>
           ) : (
-            <p className="px-3 py-2 text-[color:var(--muted)]">
+            <p className="px-3 py-2 text-(--muted)">
               {strings.searchNoResults}
             </p>
           )}

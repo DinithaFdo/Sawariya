@@ -13,7 +13,7 @@ export const LanguageSwitcher = () => {
   const { language, setLanguage, strings } = useTrip();
 
   return (
-    <label className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--muted)]">
+    <label className="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-(--muted)">
       <span>{strings.language}</span>
       <select
         className="nav-chip text-xs font-semibold"

@@ -45,7 +45,9 @@ export const fetchOsrmRoute = async (
   const route = data.routes?.[0];
   if (!route) return null;
 
-  const coords = route.geometry.coordinates.map(([lng, lat]) => [lat, lng]);
+  const coords = route.geometry.coordinates.map(
+    ([lng, lat]) => [lat, lng] as [number, number],
+  );
   const durationWithBufferSeconds = route.duration * LANKAN_BUFFER;
 
   return {

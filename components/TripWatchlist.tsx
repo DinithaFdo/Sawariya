@@ -117,8 +117,10 @@ export const TripWatchlist = ({
 
   useEffect(() => {
     if (activeLocations.length === 0) {
-      setGroups([]);
-      setIsLoading(false);
+      queueMicrotask(() => {
+        setGroups([]);
+        setIsLoading(false);
+      });
       return;
     }
 
