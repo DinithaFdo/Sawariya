@@ -23,6 +23,55 @@ type Dictionary = {
   mapPlaceholder: string;
   sampleRouteShort: string;
   sampleRouteLong: string;
+  searchLoading: string;
+  searchNoResults: string;
+  mapLoading: string;
+  stopLabel: string;
+  removeStop: string;
+  aiPlannerTitle: string;
+  aiPlannerSubtitle: string;
+  aiPlannerCta: string;
+  aiPlannerEmpty: string;
+  aiPlannerError: string;
+  aiPlannerLoading: string;
+  aiPlannerClearLabel: string;
+  optimizedOrderLabel: string;
+  timeAtStopLabel: string;
+  stayAreaLabel: string;
+  mealLabel: string;
+  breakfastLabel: string;
+  lunchLabel: string;
+  dinnerLabel: string;
+  minutesShort: string;
+  travelLabel: string;
+  visitLabel: string;
+  applyOrderLabel: string;
+  travelTimeLabel: string;
+  travelLoadingLabel: string;
+  totalTripTimeLabel: string;
+  totalTripLoadingLabel: string;
+  bestStartTimeLabel: string;
+  bestStartTimeEarly: string;
+  bestStartTimeMorning: string;
+  watchTitle: string;
+  watchSubtitle: string;
+  watchLoading: string;
+  watchEmpty: string;
+  watchNearLabel: string;
+  watchRadiusLabel: string;
+  watchRadiusUnit: string;
+  watchFiltersLabel: string;
+  watchAddLabel: string;
+  watchAddedLabel: string;
+  watchDistanceUnit: string;
+  categoryAttraction: string;
+  categoryMuseum: string;
+  categoryViewpoint: string;
+  categoryHeritage: string;
+  categoryTemple: string;
+  categoryPark: string;
+  categoryBeach: string;
+  categoryWaterfall: string;
   language: string;
   locationsCount: string;
   sriLankaNote: string;
@@ -52,6 +101,55 @@ export const dictionary: Record<Language, Dictionary> = {
     mapPlaceholder: "Map preview will appear here.",
     sampleRouteShort: "A → B → C",
     sampleRouteLong: "Colombo → Kandy → Ella",
+    searchLoading: "Searching Sri Lanka...",
+    searchNoResults: "No results found in Sri Lanka.",
+    mapLoading: "Loading map...",
+    stopLabel: "Stop",
+    removeStop: "Remove",
+    aiPlannerTitle: "AI Planner",
+    aiPlannerSubtitle: "Get a smart sequence, stay area, and meal timing.",
+    aiPlannerCta: "Generate AI plan",
+    aiPlannerEmpty: "Add at least two stops to generate a plan.",
+    aiPlannerError: "Unable to generate a plan right now.",
+    aiPlannerLoading: "Planning...",
+    aiPlannerClearLabel: "Clear AI plan",
+    optimizedOrderLabel: "Optimized order",
+    timeAtStopLabel: "Time at each stop",
+    stayAreaLabel: "Stay area",
+    mealLabel: "Meals",
+    breakfastLabel: "Breakfast",
+    lunchLabel: "Lunch",
+    dinnerLabel: "Dinner",
+    minutesShort: "min",
+    travelLabel: "Travel",
+    visitLabel: "Visit",
+    applyOrderLabel: "Apply optimized order",
+    travelTimeLabel: "Total travel time",
+    travelLoadingLabel: "Calculating with Lankan buffer...",
+    totalTripTimeLabel: "Total trip time",
+    totalTripLoadingLabel: "Calculating full day...",
+    bestStartTimeLabel: "Best start time",
+    bestStartTimeEarly: "Start by 6:30 AM for a full day",
+    bestStartTimeMorning: "Start around 8:00 AM",
+    watchTitle: "Places to watch",
+    watchSubtitle: "Nearby highlights and cultural stops along your route.",
+    watchLoading: "Finding places near your stops...",
+    watchEmpty: "No places found yet. Add more stops to discover highlights.",
+    watchNearLabel: "Near",
+    watchRadiusLabel: "Radius",
+    watchRadiusUnit: "km",
+    watchFiltersLabel: "Filters",
+    watchAddLabel: "Add",
+    watchAddedLabel: "Added",
+    watchDistanceUnit: "km",
+    categoryAttraction: "Attraction",
+    categoryMuseum: "Museum",
+    categoryViewpoint: "Viewpoint",
+    categoryHeritage: "Heritage",
+    categoryTemple: "Temple",
+    categoryPark: "Park",
+    categoryBeach: "Beach",
+    categoryWaterfall: "Waterfall",
     language: "Language",
     locationsCount: "Stops",
     sriLankaNote: "Travel times include the Lankan buffer (1.3x).",
@@ -79,6 +177,55 @@ export const dictionary: Record<Language, Dictionary> = {
     mapPlaceholder: "සිතියම පෙරදසුන මෙහි පෙන්වයි.",
     sampleRouteShort: "A → B → C",
     sampleRouteLong: "කොළඹ → මහනුවර → ඇල්ල",
+    searchLoading: "ශ්‍රී ලංකාවේ සොයමින්...",
+    searchNoResults: "ශ්‍රී ලංකාවේ ප්‍රතිඵල නොමැත.",
+    mapLoading: "සිතියම ලෝඩ් වෙමින්...",
+    stopLabel: "නැවතුම",
+    removeStop: "ඉවත් කරන්න",
+    aiPlannerTitle: "AI සැලසුම",
+    aiPlannerSubtitle: "ගමන් අනුक्रमය, නවාතැන් ප්‍රදේශ සහ ආහාර යෝජනා ලබාගන්න.",
+    aiPlannerCta: "AI සැලසුම ගන්න",
+    aiPlannerEmpty: "සැලසුම සඳහා අවම වශයෙන් නැවතුම් දෙකක් එක් කරන්න.",
+    aiPlannerError: "දැනට සැලසුම ලබාගත නොහැක.",
+    aiPlannerLoading: "සැලසුම් කරමින්...",
+    aiPlannerClearLabel: "AI සැලසුම ඉවත් කරන්න",
+    optimizedOrderLabel: "ප්‍රශස්ත අනුಕ್ರಮය",
+    timeAtStopLabel: "නැවතුමක කාලය",
+    stayAreaLabel: "නවාතැන් ප්‍රදේශය",
+    mealLabel: "ආහාර",
+    breakfastLabel: "උදෑසන ආහාර",
+    lunchLabel: "දවල් ආහාර",
+    dinnerLabel: "රාත්‍රී ආහාර",
+    minutesShort: "මිනි",
+    travelLabel: "ගමන්",
+    visitLabel: "සංචාරය",
+    applyOrderLabel: "ප්‍රශස්ත අනුक्रमය යොදන්න",
+    travelTimeLabel: "සම්පූර්ණ ගමන් වේලාව",
+    travelLoadingLabel: "ලාංකීය බෆර් සමඟ ගණනය කරමින්...",
+    totalTripTimeLabel: "සම්පූර්ණ ගමන් කාලය",
+    totalTripLoadingLabel: "සම්පූර්ණ දිනය ගණනය කරමින්...",
+    bestStartTimeLabel: "ආරම්භ කිරීමට හොඳම වේලාව",
+    bestStartTimeEarly: "සම්පූර්ණ දිනය සඳහා පෙ.ව. 6:30 ට පෙර ආරම්භ කරන්න",
+    bestStartTimeMorning: "පෙ.ව. 8:00 ට සමීපව ආරම්භ කරන්න",
+    watchTitle: "බලාගන්න ඇති ස්ථාන",
+    watchSubtitle: "ඔබගේ මාර්ගයේ අසල සුවිශේෂී සහ සංස්කෘතික ස්ථාන.",
+    watchLoading: "ඔබගේ නැවතුම් අසල ස්ථාන සොයමින්...",
+    watchEmpty: "තවම ස්ථාන නොමැත. වැඩි නැවතුම් එක් කරන්න.",
+    watchNearLabel: "අසළ",
+    watchRadiusLabel: "රේඩියස්",
+    watchRadiusUnit: "කිමී",
+    watchFiltersLabel: "පෙරහන්",
+    watchAddLabel: "එක් කරන්න",
+    watchAddedLabel: "එක් කළා",
+    watchDistanceUnit: "කිමී",
+    categoryAttraction: "අදර්ශනීය",
+    categoryMuseum: "කෞතුකාගාරය",
+    categoryViewpoint: "දර්ශන ස්ථානය",
+    categoryHeritage: "පුරාවස්තු",
+    categoryTemple: "දේවාලය",
+    categoryPark: "පාක්",
+    categoryBeach: "වෙරළ",
+    categoryWaterfall: "ජලපත",
     language: "භාෂාව",
     locationsCount: "නැවතුම්",
     sriLankaNote: "ගමන් වේලාවල 1.3x ලාංකීය බෆර් එක අඩංගුය.",
@@ -110,6 +257,56 @@ export const dictionary: Record<Language, Dictionary> = {
     mapPlaceholder: "வரைபட முன்னோட்டம் இங்கு தோன்றும்.",
     sampleRouteShort: "A → B → C",
     sampleRouteLong: "கொழும்பு → கண்டி → எல்லா",
+    searchLoading: "இலங்கையில் தேடுகிறது...",
+    searchNoResults: "இலங்கையில் முடிவுகள் இல்லை.",
+    mapLoading: "வரைபடம் ஏற்றப்படுகிறது...",
+    stopLabel: "நிறுத்தம்",
+    removeStop: "நீக்கு",
+    aiPlannerTitle: "AI திட்டம்",
+    aiPlannerSubtitle: "பயண வரிசை, தங்கும் பகுதி, உணவு நேரம் பெறுங்கள்.",
+    aiPlannerCta: "AI திட்டத்தை உருவாக்கவும்",
+    aiPlannerEmpty:
+      "திட்டம் உருவாக்க குறைந்தது இரண்டு நிறுத்தங்களை சேர்க்கவும்.",
+    aiPlannerError: "திட்டத்தை உருவாக்க முடியவில்லை.",
+    aiPlannerLoading: "திட்டமிடுகிறது...",
+    aiPlannerClearLabel: "AI திட்டத்தை நீக்கு",
+    optimizedOrderLabel: "மேம்படுத்தப்பட்ட வரிசை",
+    timeAtStopLabel: "ஒவ்வொரு நிறுத்த நேரம்",
+    stayAreaLabel: "தங்கும் பகுதி",
+    mealLabel: "உணவுகள்",
+    breakfastLabel: "காலை உணவு",
+    lunchLabel: "மதிய உணவு",
+    dinnerLabel: "இரவு உணவு",
+    minutesShort: "நிமிடம்",
+    travelLabel: "பயணம்",
+    visitLabel: "பார்வை",
+    applyOrderLabel: "மேம்படுத்திய வரிசையை பயன்படுத்தவும்",
+    travelTimeLabel: "மொத்த பயண நேரம்",
+    travelLoadingLabel: "இலங்கை பஃபர் உடன் கணக்கிடுகிறது...",
+    totalTripTimeLabel: "மொத்த பயண நேரம்",
+    totalTripLoadingLabel: "முழு நாள் கணக்கிடுகிறது...",
+    bestStartTimeLabel: "சிறந்த தொடக்க நேரம்",
+    bestStartTimeEarly: "முழு நாளுக்கு காலை 6:30 க்கு முன் தொடங்கவும்",
+    bestStartTimeMorning: "காலை 8:00 அருகில் தொடங்கவும்",
+    watchTitle: "கவனிக்க வேண்டிய இடங்கள்",
+    watchSubtitle: "பாதையில் உள்ள அருகிலான சிறப்பு மற்றும் கலாச்சார இடங்கள்.",
+    watchLoading: "உங்கள் நிறுத்தங்களுக்கு அருகில் இடங்களை கண்டுபிடிக்கிறது...",
+    watchEmpty: "இன்னும் இடங்கள் இல்லை. மேலும் நிறுத்தங்களை சேர்க்கவும்.",
+    watchNearLabel: "அருகில்",
+    watchRadiusLabel: "அரையளவு",
+    watchRadiusUnit: "கிமீ",
+    watchFiltersLabel: "வடிகட்டிகள்",
+    watchAddLabel: "சேர்",
+    watchAddedLabel: "சேர்க்கப்பட்டது",
+    watchDistanceUnit: "கிமீ",
+    categoryAttraction: "சிறப்பு இடம்",
+    categoryMuseum: "அருங்காட்சியகம்",
+    categoryViewpoint: "நோக்கிடம்",
+    categoryHeritage: "பாரம்பரியம்",
+    categoryTemple: "கோவில்",
+    categoryPark: "பூங்கா",
+    categoryBeach: "கடற்கரை",
+    categoryWaterfall: "அருவி",
     language: "மொழி",
     locationsCount: "நிறுத்தங்கள்",
     sriLankaNote: "பயண நேரத்தில் 1.3x இலங்கை பஃபர் சேர்க்கப்பட்டுள்ளது.",

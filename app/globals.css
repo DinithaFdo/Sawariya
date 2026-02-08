@@ -62,3 +62,98 @@ body::before {
   box-shadow: 0 18px 45px rgba(15, 23, 42, 0.1);
   backdrop-filter: blur(16px);
 }
+
+.map-shell {
+  min-height: 320px;
+}
+
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+  border-radius: 1.5rem;
+  z-index: 0;
+}
+
+.trip-pin {
+  background: transparent;
+  border: none;
+  width: 34px;
+  height: 34px;
+  margin: 0;
+}
+
+.trip-pin__core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  position: relative;
+  display: block;
+  height: 28px;
+  width: 28px;
+  border-radius: 999px;
+  background: radial-gradient(
+    circle at 35% 35%,
+    #ffffff 0%,
+    #e2e8f0 45%,
+    #0b0f1a 100%
+  );
+  box-shadow:
+    0 10px 24px rgba(15, 23, 42, 0.35),
+    inset 0 0 0 2px #ffffff;
+}
+
+.trip-pin__core::after {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  border-radius: 999px;
+  background: #0b0f1a;
+  opacity: 0.85;
+}
+
+.trip-pin__pulse {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 34px;
+  height: 34px;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.2);
+  animation: pinPulse 2.4s ease-out infinite;
+}
+
+.route-base {
+  filter: drop-shadow(0 8px 14px rgba(15, 23, 42, 0.35));
+}
+
+.route-pulse {
+  stroke-dasharray: 14 18;
+  animation: routePulse 3.2s linear infinite;
+  filter: drop-shadow(0 0 8px rgba(15, 23, 42, 0.4));
+}
+
+@keyframes routePulse {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: -120;
+  }
+}
+
+@keyframes pinPulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0.7);
+    opacity: 0.65;
+  }
+  70% {
+    transform: translate(-50%, -50%) scale(1.6);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.6);
+    opacity: 0;
+  }
+}

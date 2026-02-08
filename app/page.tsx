@@ -3,9 +3,23 @@
 import { Compass, Leaf, MapPin, Route, Sparkles, Waves } from "lucide-react";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useTrip } from "@/components/TripProvider";
+import { SearchBar } from "@/components/SearchBar";
+import { MapComponent } from "@/components/MapComponent";
+import { AIPlannerCard } from "@/components/AIPlannerCard";
+import { TripWatchlist } from "@/components/TripWatchlist";
 
 export default function Home() {
-  const { locations, strings } = useTrip();
+  const {
+    locations,
+    language,
+    strings,
+    addLocation,
+    removeLocation,
+    clearLocations,
+    applyOptimizedOrder,
+    aiPlan,
+    setAiPlan,
+  } = useTrip();
 
   return (
     <div className="min-h-screen">
@@ -97,13 +111,7 @@ export default function Home() {
               <Leaf className="h-8 w-8 text-emerald-500" />
             </div>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-              <input
-                className="flex-1 rounded-full border border-white/70 bg-white/80 px-5 py-3 text-sm text-slate-700 shadow-sm outline-none transition focus:ring-2 focus:ring-emerald-300"
-                placeholder={strings.searchPlaceholder}
-              />
-              <button className="rounded-full bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-200 transition hover:bg-emerald-700">
-                {strings.addStop}
-              </button>
+              <SearchBar />
             </div>
           </div>
           <div className="glass-panel flex flex-col rounded-3xl p-6 sm:p-8">
@@ -116,8 +124,17 @@ export default function Home() {
               </div>
               <Route className="h-8 w-8 text-sky-500" />
             </div>
-            <div className="mt-6 flex flex-1 items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-white/70 p-6 text-center text-sm text-slate-500">
-              {strings.mapPlaceholder}
+            <div className="map-shell mt-6 overflow-hidden rounded-2xl border border-white/70 bg-white/70">
+              {locations.length === 0 ? (
+                <div className="flex h-full min-h-[320px] items-center justify-center p-6 text-center text-sm text-slate-500">
+                  {strings.mapPlaceholder}
+                </div>
+              ) : (
+                <MapComponent
+                  locations={locations}
+                  loadingLabel={strings.mapLoading}
+                />
+              )}
             </div>
           </div>
         </section>
@@ -133,27 +150,102 @@ export default function Home() {
                   {strings.itinerarySubtitle}
                 </p>
               </div>
-              <button className="rounded-full border border-emerald-100 bg-white/70 px-4 py-2 text-xs font-semibold text-emerald-700">
+              <button
+                onClick={clearLocations}
+                className="rounded-full border border-emerald-100 bg-white/70 px-4 py-2 text-xs font-semibold text-emerald-700"
+              >
                 {strings.clearTrip}
               </button>
             </div>
-            <div className="mt-6 rounded-2xl border border-dashed border-slate-200 bg-white/70 p-6 text-sm text-slate-500">
-              {locations.length === 0
-                ? strings.noStops
-                : strings.sampleRouteLong}
+            <div className="mt-6 grid gap-3">
+              {locations.length === 0 ? (
+                <div className="rounded-2xl border border-dashed border-slate-200 bg-white/70 p-6 text-sm text-slate-500">
+                  {strings.noStops}
+                </div>
+              ) : (
+                locations.map((location, index) => (
+                  <div
+                    key={location.id}
+                    className="flex items-center justify-between rounded-2xl border border-white/70 bg-white/70 px-4 py-3 text-sm"
+                  >
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-600">
+                        {strings.stopLabel} {index + 1}
+                      </p>
+                      <p className="text-slate-700">{location.name}</p>
+                    </div>
+                    <button
+                      onClick={() => removeLocation(location.id)}
+                      className="rounded-full border border-slate-200 bg-white/80 px-3 py-1 text-xs font-semibold text-slate-600"
+                    >
+                      {strings.removeStop}
+                    </button>
+                  </div>
+                ))
+              )}
             </div>
           </div>
-          <div className="glass-card rounded-3xl p-6 sm:p-8">
-            <h3 className="font-display text-2xl font-semibold text-slate-900">
-              {strings.howItWorks}
-            </h3>
-            <div className="mt-6 grid gap-4 text-sm text-slate-600">
-              <p>1. {strings.searchTitle}.</p>
-              <p>2. {strings.mapSubtitle}</p>
-              <p>3. {strings.optimize}</p>
-            </div>
-          </div>
+          <AIPlannerCard
+            locations={locations}
+            initialPlan={aiPlan}
+            onApplyOrder={applyOptimizedOrder}
+            onSavePlan={setAiPlan}
+            strings={{
+              aiPlannerTitle: strings.aiPlannerTitle,
+              aiPlannerSubtitle: strings.aiPlannerSubtitle,
+              aiPlannerCta: strings.aiPlannerCta,
+              aiPlannerEmpty: strings.aiPlannerEmpty,
+              aiPlannerError: strings.aiPlannerError,
+              aiPlannerLoading: strings.aiPlannerLoading,
+              aiPlannerClearLabel: strings.aiPlannerClearLabel,
+              optimizedOrderLabel: strings.optimizedOrderLabel,
+              timeAtStopLabel: strings.timeAtStopLabel,
+              stayAreaLabel: strings.stayAreaLabel,
+              mealLabel: strings.mealLabel,
+              breakfastLabel: strings.breakfastLabel,
+              lunchLabel: strings.lunchLabel,
+              dinnerLabel: strings.dinnerLabel,
+              minutesShort: strings.minutesShort,
+              travelLabel: strings.travelLabel,
+              visitLabel: strings.visitLabel,
+              applyOrderLabel: strings.applyOrderLabel,
+              travelTimeLabel: strings.travelTimeLabel,
+              travelLoadingLabel: strings.travelLoadingLabel,
+              totalTripTimeLabel: strings.totalTripTimeLabel,
+              totalTripLoadingLabel: strings.totalTripLoadingLabel,
+              bestStartTimeLabel: strings.bestStartTimeLabel,
+              bestStartTimeEarly: strings.bestStartTimeEarly,
+              bestStartTimeMorning: strings.bestStartTimeMorning,
+            }}
+          />
         </section>
+
+        <TripWatchlist
+          locations={locations}
+          language={language}
+          onAddLocation={addLocation}
+          strings={{
+            watchTitle: strings.watchTitle,
+            watchSubtitle: strings.watchSubtitle,
+            watchLoading: strings.watchLoading,
+            watchEmpty: strings.watchEmpty,
+            watchNearLabel: strings.watchNearLabel,
+            watchRadiusLabel: strings.watchRadiusLabel,
+            watchRadiusUnit: strings.watchRadiusUnit,
+            watchFiltersLabel: strings.watchFiltersLabel,
+            watchAddLabel: strings.watchAddLabel,
+            watchAddedLabel: strings.watchAddedLabel,
+            watchDistanceUnit: strings.watchDistanceUnit,
+            categoryAttraction: strings.categoryAttraction,
+            categoryMuseum: strings.categoryMuseum,
+            categoryViewpoint: strings.categoryViewpoint,
+            categoryHeritage: strings.categoryHeritage,
+            categoryTemple: strings.categoryTemple,
+            categoryPark: strings.categoryPark,
+            categoryBeach: strings.categoryBeach,
+            categoryWaterfall: strings.categoryWaterfall,
+          }}
+        />
       </main>
     </div>
   );
