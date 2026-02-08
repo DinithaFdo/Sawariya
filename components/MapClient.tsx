@@ -100,8 +100,9 @@ const MapClient = ({ locations }: { locations: Location[] }) => {
     <MapContainer
       center={SRI_LANKA_CENTER}
       zoom={7}
-      className="h-full min-h-[320px]"
+      className="map-modern"
       scrollWheelZoom
+      zoomControl={false}
     >
       <TileLayer
         attribution="&copy; OpenStreetMap contributors"

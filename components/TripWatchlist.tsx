@@ -94,17 +94,18 @@ export const TripWatchlist = ({
   const [groups, setGroups] = useState<WatchGroup[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [radiusKm, setRadiusKm] = useState(3);
-  const [selectedCategories, setSelectedCategories] = useState(() =>
-    new Set([
-      "attraction",
-      "museum",
-      "viewpoint",
-      "heritage",
-      "temple",
-      "park",
-      "beach",
-      "waterfall",
-    ]),
+  const [selectedCategories, setSelectedCategories] = useState(
+    () =>
+      new Set([
+        "attraction",
+        "museum",
+        "viewpoint",
+        "heritage",
+        "temple",
+        "park",
+        "beach",
+        "waterfall",
+      ]),
   );
 
   const existingIds = useMemo(
@@ -229,8 +230,20 @@ export const TripWatchlist = ({
       </div>
 
       {isLoading ? (
-        <div className="mt-6 rounded-2xl border border-dashed border-slate-200 bg-white/70 p-6 text-sm text-slate-500">
-          {strings.watchLoading}
+        <div className="mt-6 grid gap-4 lg:grid-cols-2">
+          {[0, 1].map((item) => (
+            <div
+              key={item}
+              className="rounded-2xl border border-white/70 bg-white/70 p-5"
+            >
+              <div className="skeleton h-3 w-32" />
+              <div className="mt-4 grid gap-3">
+                {[0, 1, 2].map((row) => (
+                  <div key={row} className="skeleton h-10 w-full" />
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       ) : null}
 
@@ -250,7 +263,9 @@ export const TripWatchlist = ({
               {strings.watchNearLabel} {group.location.name}
             </p>
             <div className="mt-4 grid gap-3">
-              {group.items.filter((item) => selectedCategories.has(item.category)).length === 0 ? (
+              {group.items.filter((item) =>
+                selectedCategories.has(item.category),
+              ).length === 0 ? (
                 <p className="text-sm text-slate-500">{strings.watchEmpty}</p>
               ) : (
                 group.items
@@ -278,7 +293,8 @@ export const TripWatchlist = ({
                         </div>
                         <div className="flex items-center gap-3">
                           <span className="text-xs font-semibold text-slate-500">
-                            {item.distanceKm.toFixed(1)} {strings.watchDistanceUnit}
+                            {item.distanceKm.toFixed(1)}{" "}
+                            {strings.watchDistanceUnit}
                           </span>
                           <button
                             type="button"
@@ -294,7 +310,9 @@ export const TripWatchlist = ({
                             className="inline-flex items-center gap-1 rounded-full border border-emerald-100 bg-emerald-50 px-2 py-1 text-xs font-semibold text-emerald-700 transition disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-500"
                           >
                             <Plus className="h-3 w-3" />
-                            {isAdded ? strings.watchAddedLabel : strings.watchAddLabel}
+                            {isAdded
+                              ? strings.watchAddedLabel
+                              : strings.watchAddLabel}
                           </button>
                         </div>
                       </div>

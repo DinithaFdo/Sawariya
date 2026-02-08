@@ -1,7 +1,8 @@
 "use client";
 
-import { Compass, Leaf, MapPin, Route, Sparkles, Waves } from "lucide-react";
+import { Compass, Heart, X } from "lucide-react";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { useTrip } from "@/components/TripProvider";
 import { SearchBar } from "@/components/SearchBar";
 import { MapComponent } from "@/components/MapComponent";
@@ -22,169 +23,92 @@ export default function Home() {
   } = useTrip();
 
   return (
-    <div className="min-h-screen">
-      <main className="mx-auto flex w-full max-w-6xl flex-col px-4 pb-16 pt-8 sm:px-8 lg:px-12">
-        <header className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex items-center gap-4">
-            <div className="glass-panel flex h-12 w-12 items-center justify-center rounded-2xl text-emerald-700">
-              <Compass className="h-6 w-6" />
-            </div>
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-700">
-                {strings.appName}
-              </p>
-              <h1 className="font-display text-3xl font-semibold text-slate-900 sm:text-4xl">
-                {strings.heroTitle}
-              </h1>
-            </div>
+    <div className="min-h-screen pb-24">
+      <nav className="nav-shell mx-auto mt-6 flex w-[min(1440px,94%)] items-center justify-between rounded-full px-6 py-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black text-white">
+            <Compass className="h-5 w-5" />
           </div>
+          <div>
+            <p className="font-display text-lg font-semibold">සවාරිය</p>
+            <p className="text-xs text-[color:var(--muted)]">Sawariya</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
           <LanguageSwitcher />
-        </header>
+          <ThemeToggle />
+        </div>
+      </nav>
 
-        <section className="mt-10 grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="glass-card flex flex-col gap-6 rounded-3xl p-8">
-            <p className="text-lg text-slate-600 sm:text-xl">
-              {strings.tagline}
-            </p>
-            <div className="flex flex-wrap items-center gap-3">
-              <button className="inline-flex items-center gap-2 rounded-full bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-200 transition hover:bg-emerald-700">
-                <MapPin className="h-4 w-4" />
-                {strings.startPlanning}
-              </button>
-              <button className="inline-flex items-center gap-2 rounded-full border border-emerald-100 bg-white/70 px-6 py-3 text-sm font-semibold text-emerald-700 shadow-sm transition hover:border-emerald-200">
-                <Sparkles className="h-4 w-4" />
-                {strings.optimize}
-              </button>
-            </div>
-            <div className="flex flex-wrap gap-4 text-sm text-slate-600">
-              <div className="flex items-center gap-2">
-                <Route className="h-4 w-4 text-emerald-600" />
-                {strings.sriLankaNote}
-              </div>
-            </div>
+      <main className="mx-auto flex w-full max-w-[1440px] flex-col px-4 pt-8 sm:px-8 lg:px-12">
+        <section className="hero-shell">
+          <div className="hero-map">
+            <MapComponent
+              locations={locations}
+              loadingLabel={strings.mapLoading}
+            />
           </div>
-          <div className="glass-card flex flex-col gap-6 rounded-3xl p-8">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-600">
-                  {strings.planTrip}
-                </p>
-                <h2 className="font-display text-2xl font-semibold text-slate-900">
-                  {strings.aiPanelTitle}
-                </h2>
-              </div>
-              <Waves className="h-8 w-8 text-sky-500" />
-            </div>
-            <p className="text-sm text-slate-600">{strings.aiPanelSubtitle}</p>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-2xl bg-white/70 p-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-                  {strings.locationsCount}
-                </p>
-                <p className="text-2xl font-semibold text-slate-900">
-                  {locations.length}
-                </p>
-              </div>
-              <div className="rounded-2xl bg-white/70 p-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-                  {strings.itinerary}
-                </p>
-                <p className="text-2xl font-semibold text-slate-900">
-                  {strings.sampleRouteShort}
-                </p>
-              </div>
-            </div>
+          <div className="hero-overlay" />
+          <div className="hero-search glass-panel rounded-full px-4 py-3">
+            <SearchBar />
           </div>
         </section>
 
-        <section className="mt-10 grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-          <div className="glass-panel rounded-3xl p-6 sm:p-8">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h3 className="font-display text-2xl font-semibold text-slate-900">
-                  {strings.searchTitle}
-                </h3>
-                <p className="text-sm text-slate-600">
-                  {strings.searchSubtitle}
-                </p>
-              </div>
-              <Leaf className="h-8 w-8 text-emerald-500" />
+        <section className="mt-10">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--muted)]">
+                {strings.itinerary}
+              </p>
+              <h2 className="font-display text-2xl font-semibold">
+                {strings.itinerarySubtitle}
+              </h2>
             </div>
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-              <SearchBar />
-            </div>
+            <button
+              onClick={clearLocations}
+              className="nav-chip text-xs font-semibold"
+              title={strings.clearTrip}
+            >
+              {strings.clearTrip}
+            </button>
           </div>
-          <div className="glass-panel flex flex-col rounded-3xl p-6 sm:p-8">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h3 className="font-display text-2xl font-semibold text-slate-900">
-                  {strings.map}
-                </h3>
-                <p className="text-sm text-slate-600">{strings.mapSubtitle}</p>
+          <div className="route-scroll mt-6 flex gap-4 overflow-x-auto pb-6">
+            {locations.length === 0 ? (
+              <div className="glass-panel w-full rounded-2xl p-6 text-sm text-[color:var(--muted)]">
+                {strings.noStops}
               </div>
-              <Route className="h-8 w-8 text-sky-500" />
-            </div>
-            <div className="map-shell mt-6 overflow-hidden rounded-2xl border border-white/70 bg-white/70">
-              {locations.length === 0 ? (
-                <div className="flex h-full min-h-[320px] items-center justify-center p-6 text-center text-sm text-slate-500">
-                  {strings.mapPlaceholder}
-                </div>
-              ) : (
-                <MapComponent
-                  locations={locations}
-                  loadingLabel={strings.mapLoading}
-                />
-              )}
-            </div>
-          </div>
-        </section>
-
-        <section className="mt-10 grid gap-6 md:grid-cols-2">
-          <div className="glass-card rounded-3xl p-6 sm:p-8">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-display text-2xl font-semibold text-slate-900">
-                  {strings.itinerary}
-                </h3>
-                <p className="text-sm text-slate-600">
-                  {strings.itinerarySubtitle}
-                </p>
-              </div>
-              <button
-                onClick={clearLocations}
-                className="rounded-full border border-emerald-100 bg-white/70 px-4 py-2 text-xs font-semibold text-emerald-700"
-              >
-                {strings.clearTrip}
-              </button>
-            </div>
-            <div className="mt-6 grid gap-3">
-              {locations.length === 0 ? (
-                <div className="rounded-2xl border border-dashed border-slate-200 bg-white/70 p-6 text-sm text-slate-500">
-                  {strings.noStops}
-                </div>
-              ) : (
-                locations.map((location, index) => (
-                  <div
-                    key={location.id}
-                    className="flex items-center justify-between rounded-2xl border border-white/70 bg-white/70 px-4 py-3 text-sm"
-                  >
-                    <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-600">
-                        {strings.stopLabel} {index + 1}
-                      </p>
-                      <p className="text-slate-700">{location.name}</p>
+            ) : (
+              locations.map((location, index) => {
+                const isLast = index === locations.length - 1;
+                return (
+                  <div key={location.id} className="route-card">
+                    <div className="route-card__header">
+                      <span className="route-card__dot" />
+                      {!isLast ? <span className="route-card__line" /> : null}
                     </div>
-                    <button
-                      onClick={() => removeLocation(location.id)}
-                      className="rounded-full border border-slate-200 bg-white/80 px-3 py-1 text-xs font-semibold text-slate-600"
-                    >
-                      {strings.removeStop}
-                    </button>
+                    <div className="route-card__box">
+                      <div className="route-card__content">
+                        <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-[color:var(--muted)]">
+                          {strings.stopLabel} {index + 1}
+                        </p>
+                        <p className="route-card__title">{location.name}</p>
+                      </div>
+                      <button
+                        onClick={() => removeLocation(location.id)}
+                        className="route-card__close"
+                        title={strings.removeStop}
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
                   </div>
-                ))
-              )}
-            </div>
+                );
+              })
+            )}
           </div>
+        </section>
+
+        <section className="mt-12">
           <AIPlannerCard
             locations={locations}
             initialPlan={aiPlan}
@@ -198,6 +122,9 @@ export default function Home() {
               aiPlannerError: strings.aiPlannerError,
               aiPlannerLoading: strings.aiPlannerLoading,
               aiPlannerClearLabel: strings.aiPlannerClearLabel,
+              aiPlannerRotateOne: strings.aiPlannerRotateOne,
+              aiPlannerRotateTwo: strings.aiPlannerRotateTwo,
+              aiPlannerRotateThree: strings.aiPlannerRotateThree,
               optimizedOrderLabel: strings.optimizedOrderLabel,
               timeAtStopLabel: strings.timeAtStopLabel,
               stayAreaLabel: strings.stayAreaLabel,
@@ -246,6 +173,18 @@ export default function Home() {
             categoryWaterfall: strings.categoryWaterfall,
           }}
         />
+
+        <footer className="mt-14 rounded-[32px] border border-black/10 bg-black px-6 py-8 text-center text-sm text-white sm:px-10">
+          <p className="flex items-center justify-center gap-2">
+            <Heart className="h-4 w-4 text-rose-400" />
+            <span>
+              Built by{" "}
+              <a href="https://www.dinitha.me" className="underline">
+                Dinitha
+              </a>
+            </span>
+          </p>
+        </footer>
       </main>
     </div>
   );

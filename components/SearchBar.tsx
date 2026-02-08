@@ -75,26 +75,30 @@ export const SearchBar = () => {
       <form className="flex flex-col gap-3 sm:flex-row" onSubmit={handleSubmit}>
         <label className="relative flex-1">
           <span className="sr-only">{strings.searchPlaceholder}</span>
-          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[color:var(--muted)]" />
           <input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            className="w-full rounded-full border border-white/70 bg-white/80 py-3 pl-11 pr-4 text-sm text-slate-700 shadow-sm outline-none transition focus:ring-2 focus:ring-emerald-300"
+            className="w-full rounded-full border border-white/60 bg-white/90 py-3 pl-11 pr-4 text-sm text-[color:var(--foreground)] shadow-[0_18px_35px_rgba(15,23,42,0.15)] outline-none transition focus:ring-2 focus:ring-black/30"
             placeholder={strings.searchPlaceholder}
           />
         </label>
         <button
           type="submit"
-          className="rounded-full bg-emerald-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-200 transition hover:bg-emerald-700"
+          className="rounded-full bg-black px-6 py-3 text-sm font-semibold text-white shadow-[0_18px_35px_rgba(0,0,0,0.25)] transition hover:-translate-y-0.5 hover:shadow-[0_24px_45px_rgba(0,0,0,0.3)]"
         >
           {strings.addStop}
         </button>
       </form>
 
       {query.length > 1 && (
-        <div className="glass-panel absolute z-20 mt-3 w-full rounded-2xl p-2 text-sm text-slate-700 shadow-xl">
+        <div className="glass-panel absolute z-50 mt-3 w-full rounded-2xl p-2 text-sm text-[color:var(--foreground)] shadow-xl">
           {isLoading ? (
-            <p className="px-3 py-2 text-slate-500">{strings.searchLoading}</p>
+            <div className="space-y-2 px-3 py-2">
+              {[0, 1, 2].map((item) => (
+                <div key={item} className="skeleton h-4 w-full" />
+              ))}
+            </div>
           ) : hasResults ? (
             <ul className="max-h-64 overflow-auto">
               {results.map((result, index) => {
@@ -106,9 +110,7 @@ export const SearchBar = () => {
                       onClick={() => handleSelect(result)}
                       onMouseEnter={() => setActiveIndex(index)}
                       className={`w-full rounded-xl px-3 py-2 text-left transition ${
-                        isActive
-                          ? "bg-emerald-50 text-emerald-900"
-                          : "hover:bg-emerald-50"
+                        isActive ? "bg-black text-white" : "hover:bg-black/10"
                       }`}
                     >
                       {result.display_name}
@@ -118,7 +120,7 @@ export const SearchBar = () => {
               })}
             </ul>
           ) : (
-            <p className="px-3 py-2 text-slate-500">
+            <p className="px-3 py-2 text-[color:var(--muted)]">
               {strings.searchNoResults}
             </p>
           )}

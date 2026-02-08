@@ -1,18 +1,8 @@
 import type { Metadata } from "next";
-import { DM_Sans, Playfair_Display } from "next/font/google";
 import "leaflet/dist/leaflet.css";
 import "./globals.css";
 import { TripProvider } from "@/components/TripProvider";
-
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
-  subsets: ["latin"],
-});
-
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
-  subsets: ["latin"],
-});
+import { Preloader } from "@/components/Preloader";
 
 export const metadata: Metadata = {
   title: "Sawariya | Sri Lanka Trip Planner",
@@ -27,11 +17,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        suppressHydrationWarning
-        className={`${dmSans.variable} ${playfair.variable} antialiased`}
-      >
-        <TripProvider>{children}</TripProvider>
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=manrope@400,500,600,700&display=swap"
+        />
+      </head>
+      <body suppressHydrationWarning className="antialiased">
+        <TripProvider>
+          <Preloader />
+          {children}
+        </TripProvider>
       </body>
     </html>
   );

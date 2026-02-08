@@ -11,9 +11,13 @@ import React, {
 import type { Location, OptimizedTrip } from "@/lib/types";
 import { dictionary, type Language } from "@/dictionaries/strings";
 
+type ThemeMode = "light" | "dark";
+
 type TripContextValue = {
   language: Language;
   setLanguage: (language: Language) => void;
+  theme: ThemeMode;
+  toggleTheme: () => void;
   locations: Location[];
   aiPlan: OptimizedTrip | null;
   setAiPlan: (plan: OptimizedTrip | null) => void;
@@ -31,6 +35,7 @@ const readStoredTrip = (): {
   language: Language;
   locations: Location[];
   aiPlan: OptimizedTrip | null;
+  theme: ThemeMode;
 } | null => {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -39,11 +44,13 @@ const readStoredTrip = (): {
       language: Language;
       locations: Location[];
       aiPlan: OptimizedTrip | null;
+      theme: ThemeMode;
     }>;
     return {
       language: parsed.language ?? "en",
       locations: Array.isArray(parsed.locations) ? parsed.locations : [],
       aiPlan: parsed.aiPlan ?? null,
+      theme: parsed.theme ?? "dark",
     };
   } catch {
     return null;
@@ -52,6 +59,7 @@ const readStoredTrip = (): {
 
 export const TripProvider = ({ children }: { children: React.ReactNode }) => {
   const [language, setLanguage] = useState<Language>("en");
+  const [theme, setTheme] = useState<ThemeMode>("dark");
   const [locations, setLocations] = useState<Location[]>([]);
   const [aiPlan, setAiPlan] = useState<OptimizedTrip | null>(null);
   const hydratedRef = useRef(false);
@@ -60,6 +68,7 @@ export const TripProvider = ({ children }: { children: React.ReactNode }) => {
     const stored = readStoredTrip();
     if (stored) {
       setLanguage(stored.language);
+      setTheme(stored.theme);
       setLocations(stored.locations);
       setAiPlan(stored.aiPlan);
     }
@@ -67,15 +76,23 @@ export const TripProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   useEffect(() => {
+    if (typeof document === "undefined") return;
+    document.documentElement.dataset.theme = theme;
+  }, [theme]);
+
+  useEffect(() => {
     if (!hydratedRef.current) return;
-    const payload = JSON.stringify({ language, locations, aiPlan });
+    const payload = JSON.stringify({ language, theme, locations, aiPlan });
     localStorage.setItem(STORAGE_KEY, payload);
-  }, [language, locations, aiPlan]);
+  }, [language, theme, locations, aiPlan]);
 
   const value = useMemo<TripContextValue>(
     () => ({
       language,
       setLanguage,
+      theme,
+      toggleTheme: () =>
+        setTheme((prev) => (prev === "dark" ? "light" : "dark")),
       locations,
       aiPlan,
       setAiPlan,
@@ -102,7 +119,7 @@ export const TripProvider = ({ children }: { children: React.ReactNode }) => {
         }),
       strings: dictionary[language],
     }),
-    [language, locations, aiPlan],
+    [language, theme, locations, aiPlan],
   );
 
   return <TripContext.Provider value={value}>{children}</TripContext.Provider>;

@@ -35,6 +35,9 @@ type Dictionary = {
   aiPlannerError: string;
   aiPlannerLoading: string;
   aiPlannerClearLabel: string;
+  aiPlannerRotateOne: string;
+  aiPlannerRotateTwo: string;
+  aiPlannerRotateThree: string;
   optimizedOrderLabel: string;
   timeAtStopLabel: string;
   stayAreaLabel: string;
@@ -113,6 +116,9 @@ export const dictionary: Record<Language, Dictionary> = {
     aiPlannerError: "Unable to generate a plan right now.",
     aiPlannerLoading: "Planning...",
     aiPlannerClearLabel: "Clear AI plan",
+    aiPlannerRotateOne: "Tracing the smoothest loop across the island.",
+    aiPlannerRotateTwo: "Aligning temples, coastlines, and golden-hour stops.",
+    aiPlannerRotateThree: "Balancing travel time with calm scenic pauses.",
     optimizedOrderLabel: "Optimized order",
     timeAtStopLabel: "Time at each stop",
     stayAreaLabel: "Stay area",
@@ -189,6 +195,9 @@ export const dictionary: Record<Language, Dictionary> = {
     aiPlannerError: "දැනට සැලසුම ලබාගත නොහැක.",
     aiPlannerLoading: "සැලසුම් කරමින්...",
     aiPlannerClearLabel: "AI සැලසුම ඉවත් කරන්න",
+    aiPlannerRotateOne: "දිවයින පුරා සුමට ලූපයක් සොයාගෙන ඇත.",
+    aiPlannerRotateTwo: "දේවාල, වෙරළ සහ සන්ධ්‍යා කාලය සමාලෝචනය කරමින්.",
+    aiPlannerRotateThree: "ගමන් කාලය සහ විවේක නිවැරදිව සමතුලිත කරමින්.",
     optimizedOrderLabel: "ප්‍රශස්ත අනුಕ್ರಮය",
     timeAtStopLabel: "නැවතුමක කාලය",
     stayAreaLabel: "නවාතැන් ප්‍රදේශය",
@@ -270,6 +279,10 @@ export const dictionary: Record<Language, Dictionary> = {
     aiPlannerError: "திட்டத்தை உருவாக்க முடியவில்லை.",
     aiPlannerLoading: "திட்டமிடுகிறது...",
     aiPlannerClearLabel: "AI திட்டத்தை நீக்கு",
+    aiPlannerRotateOne: "தீவைச் சுற்றி மென்மையான பாதையை வரைபடமாக்குகிறது.",
+    aiPlannerRotateTwo: "கோவில்கள், கடற்கரை, மாலை நேரங்களை ஒத்திசைக்கிறது.",
+    aiPlannerRotateThree:
+      "பயண நேரம் மற்றும் அமைதியான இடைவெளிகளை சமநிலைப்படுத்துகிறது.",
     optimizedOrderLabel: "மேம்படுத்தப்பட்ட வரிசை",
     timeAtStopLabel: "ஒவ்வொரு நிறுத்த நேரம்",
     stayAreaLabel: "தங்கும் பகுதி",

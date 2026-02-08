@@ -13,7 +13,9 @@ export type RouteData = {
 export type RouteLegs = {
   legDurationsSeconds: number[];
   legDurationsWithBufferSeconds: number[];
+  legDistancesMeters: number[];
   totalDurationWithBufferSeconds: number;
+  totalDistanceMeters: number;
 };
 
 export const fetchOsrmRoute = async (
@@ -72,7 +74,7 @@ export const fetchOsrmLegDurations = async (
 
   const data = (await response.json()) as {
     routes?: Array<{
-      legs?: Array<{ duration: number }>;
+      legs?: Array<{ duration: number; distance: number }>;
     }>;
   };
 
@@ -80,6 +82,7 @@ export const fetchOsrmLegDurations = async (
   if (!legs || legs.length === 0) return null;
 
   const legDurationsSeconds = legs.map((leg) => leg.duration);
+  const legDistancesMeters = legs.map((leg) => leg.distance);
   const legDurationsWithBufferSeconds = legDurationsSeconds.map(
     (duration) => duration * LANKAN_BUFFER,
   );
@@ -87,10 +90,16 @@ export const fetchOsrmLegDurations = async (
     (sum, value) => sum + value,
     0,
   );
+  const totalDistanceMeters = legDistancesMeters.reduce(
+    (sum, value) => sum + value,
+    0,
+  );
 
   return {
     legDurationsSeconds,
     legDurationsWithBufferSeconds,
+    legDistancesMeters,
     totalDurationWithBufferSeconds,
+    totalDistanceMeters,
   };
 };

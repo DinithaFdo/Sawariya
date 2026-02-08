@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, useTransition } from "react";
-import { Car, MapPin, Sparkles, Utensils } from "lucide-react";
+import { Car, Clock, MapPin, Sparkles, Utensils } from "lucide-react";
 import type { Location } from "@/lib/types";
 import { optimizeTrip } from "@/actions/optimizeTrip";
 import { fetchOsrmLegDurations } from "@/lib/osrm";
@@ -18,6 +18,9 @@ type AIPlannerCardProps = {
     aiPlannerError: string;
     aiPlannerLoading: string;
     aiPlannerClearLabel: string;
+    aiPlannerRotateOne: string;
+    aiPlannerRotateTwo: string;
+    aiPlannerRotateThree: string;
     optimizedOrderLabel: string;
     timeAtStopLabel: string;
     stayAreaLabel: string;
@@ -47,6 +50,8 @@ type TimelineStep = {
   title: string;
   subtitle?: string;
   minutes: number;
+  timeLabel: string;
+  distanceKm?: number;
 };
 
 const DEFAULT_VISIT_MINUTES = 60;
@@ -60,6 +65,14 @@ const MEAL_DURATIONS = {
 const buildNameMap = (locations: Location[]) =>
   new Map(locations.map((loc) => [loc.id, loc.name]));
 
+const toTimeLabel = (minutesFromMidnight: number) => {
+  const hours = Math.floor(minutesFromMidnight / 60) % 24;
+  const minutes = minutesFromMidnight % 60;
+  const suffix = hours >= 12 ? "PM" : "AM";
+  const hour12 = hours % 12 || 12;
+  return `${hour12}:${minutes.toString().padStart(2, "0")} ${suffix}`;
+};
+
 export const AIPlannerCard = ({
   locations,
   initialPlan,
@@ -71,20 +84,50 @@ export const AIPlannerCard = ({
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [travelMinutes, setTravelMinutes] = useState<number[]>([]);
+  const [travelDistancesKm, setTravelDistancesKm] = useState<number[]>([]);
   const [totalTravelMinutes, setTotalTravelMinutes] = useState<number | null>(
     null,
   );
   const [isTravelLoading, setIsTravelLoading] = useState(false);
+  const [rotateIndex, setRotateIndex] = useState(0);
 
   useEffect(() => {
     setResult(initialPlan);
   }, [initialPlan]);
+
+  const rotatingTexts = useMemo(
+    () => [
+      strings.aiPlannerRotateOne,
+      strings.aiPlannerRotateTwo,
+      strings.aiPlannerRotateThree,
+    ],
+    [strings],
+  );
+
+  useEffect(() => {
+    if (result || isPending) return;
+    const interval = window.setInterval(() => {
+      setRotateIndex((prev) => (prev + 1) % rotatingTexts.length);
+    }, 1800);
+    return () => window.clearInterval(interval);
+  }, [result, isPending, rotatingTexts.length]);
 
   const nameMap = useMemo(() => buildNameMap(locations), [locations]);
   const orderedNames = useMemo(() => {
     if (!result) return [];
     return result.order.map((id) => nameMap.get(id) ?? id);
   }, [result, nameMap]);
+
+  const routeSummary = useMemo(() => {
+    if (!result || orderedNames.length === 0) return null;
+    const start = orderedNames[0];
+    const end = orderedNames[orderedNames.length - 1];
+    return {
+      start,
+      end,
+      count: orderedNames.length,
+    };
+  }, [result, orderedNames]);
 
   const timeEstimates = useMemo(() => {
     if (!result) return [];
@@ -94,6 +137,38 @@ export const AIPlannerCard = ({
       id: item.id,
     }));
   }, [result, nameMap]);
+
+  const totalVisitMinutes = useMemo(() => {
+    if (!result) return null;
+    const estimateMap = new Map(
+      timeEstimates.map((item) => [item.id, item.minutes]),
+    );
+    return result.order.reduce((sum, id) => {
+      const minutes = estimateMap.get(id) ?? DEFAULT_VISIT_MINUTES;
+      return sum + minutes;
+    }, 0);
+  }, [result, timeEstimates]);
+
+  const totalMealMinutes = useMemo(() => {
+    if (!result) return null;
+    return (
+      MEAL_DURATIONS.breakfast + MEAL_DURATIONS.lunch + MEAL_DURATIONS.dinner
+    );
+  }, [result]);
+
+  const totalTripMinutes = useMemo(() => {
+    if (!result) return null;
+    if (isTravelLoading || totalTravelMinutes === null) return null;
+    const visits = totalVisitMinutes ?? 0;
+    const meals = totalMealMinutes ?? 0;
+    return totalTravelMinutes + visits + meals;
+  }, [
+    result,
+    isTravelLoading,
+    totalTravelMinutes,
+    totalVisitMinutes,
+    totalMealMinutes,
+  ]);
 
   const timelineSteps = useMemo(() => {
     if (!result) return [] as TimelineStep[];
@@ -106,7 +181,7 @@ export const AIPlannerCard = ({
       minutes: timeMap.get(id) ?? DEFAULT_VISIT_MINUTES,
     }));
 
-    const steps: TimelineStep[] = [];
+    const steps: Omit<TimelineStep, "timeLabel">[] = [];
 
     steps.push({
       id: "meal-breakfast",
@@ -141,12 +216,14 @@ export const AIPlannerCard = ({
         const nextStop = orderedStops[index + 1];
         const travelMinutesValue =
           travelMinutes[index] ?? DEFAULT_TRAVEL_MINUTES;
+        const distanceKm = travelDistancesKm[index];
         steps.push({
           id: `travel-${stop.id}-${nextStop.id}`,
           icon: "travel",
           title: strings.travelLabel,
           subtitle: `${stop.name} → ${nextStop.name}`,
           minutes: travelMinutesValue,
+          distanceKm,
         });
       }
     });
@@ -159,39 +236,23 @@ export const AIPlannerCard = ({
       minutes: MEAL_DURATIONS.dinner,
     });
 
-    return steps;
-  }, [result, timeEstimates, nameMap, strings, travelMinutes]);
+    const baseStartMinutes =
+      totalTripMinutes && totalTripMinutes > 480 ? 390 : 480;
+    let current = baseStartMinutes;
 
-  const totalVisitMinutes = useMemo(() => {
-    if (!result) return null;
-    const estimateMap = new Map(
-      timeEstimates.map((item) => [item.id, item.minutes]),
-    );
-    return result.order.reduce((sum, id) => {
-      const minutes = estimateMap.get(id) ?? DEFAULT_VISIT_MINUTES;
-      return sum + minutes;
-    }, 0);
-  }, [result, timeEstimates]);
-
-  const totalMealMinutes = useMemo(() => {
-    if (!result) return null;
-    return (
-      MEAL_DURATIONS.breakfast + MEAL_DURATIONS.lunch + MEAL_DURATIONS.dinner
-    );
-  }, [result]);
-
-  const totalTripMinutes = useMemo(() => {
-    if (!result) return null;
-    if (isTravelLoading || totalTravelMinutes === null) return null;
-    const visits = totalVisitMinutes ?? 0;
-    const meals = totalMealMinutes ?? 0;
-    return totalTravelMinutes + visits + meals;
+    return steps.map((step) => {
+      const timeLabel = toTimeLabel(current);
+      current += step.minutes;
+      return { ...step, timeLabel };
+    });
   }, [
     result,
-    isTravelLoading,
-    totalTravelMinutes,
-    totalVisitMinutes,
-    totalMealMinutes,
+    timeEstimates,
+    nameMap,
+    strings,
+    travelMinutes,
+    travelDistancesKm,
+    totalTripMinutes,
   ]);
 
   const bestStartTime = useMemo(() => {
@@ -209,6 +270,7 @@ export const AIPlannerCard = ({
 
     if (orderedLocations.length < 2) {
       setTravelMinutes([]);
+      setTravelDistancesKm([]);
       setTotalTravelMinutes(null);
       return;
     }
@@ -220,6 +282,7 @@ export const AIPlannerCard = ({
       if (!active) return;
       if (!data) {
         setTravelMinutes([]);
+        setTravelDistancesKm([]);
         setTotalTravelMinutes(null);
         setIsTravelLoading(false);
         return;
@@ -228,7 +291,11 @@ export const AIPlannerCard = ({
       const minutes = data.legDurationsWithBufferSeconds.map((seconds) =>
         Math.max(1, Math.round(seconds / 60)),
       );
+      const distancesKm = data.legDistancesMeters.map((meters) =>
+        Math.max(0.1, Math.round(meters / 100) / 10),
+      );
       setTravelMinutes(minutes);
+      setTravelDistancesKm(distancesKm);
       setTotalTravelMinutes(
         Math.max(1, Math.round(data.totalDurationWithBufferSeconds / 60)),
       );
@@ -265,10 +332,12 @@ export const AIPlannerCard = ({
     <div className="glass-card rounded-3xl p-6 sm:p-8">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h3 className="font-display text-2xl font-semibold text-slate-900">
+          <h3 className="font-display text-2xl font-semibold text-[color:var(--foreground)]">
             {strings.aiPlannerTitle}
           </h3>
-          <p className="text-sm text-slate-600">{strings.aiPlannerSubtitle}</p>
+          <p className="text-sm text-[color:var(--muted)]">
+            {strings.aiPlannerSubtitle}
+          </p>
         </div>
         <Sparkles className="h-7 w-7 text-emerald-500" />
       </div>
@@ -276,9 +345,11 @@ export const AIPlannerCard = ({
       <button
         onClick={handleOptimize}
         disabled={isDisabled}
-        className="mt-6 inline-flex items-center gap-2 rounded-full bg-emerald-600 px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-200 transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
+        className="ai-cta mt-6 inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {isPending ? strings.aiPlannerLoading : strings.aiPlannerCta}
+        <span>
+          {isPending ? strings.aiPlannerLoading : strings.aiPlannerCta}
+        </span>
       </button>
 
       {result ? (
@@ -300,30 +371,74 @@ export const AIPlannerCard = ({
       ) : null}
 
       {error ? (
-        <div className="mt-4 rounded-2xl border border-rose-100 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+        <div className="mt-4 rounded-2xl border border-rose-200 bg-rose-100 px-4 py-3 text-sm text-rose-700">
           {error}
         </div>
       ) : null}
 
       {locations.length < 2 && !result ? (
-        <div className="mt-6 rounded-2xl border border-dashed border-slate-200 bg-white/70 p-6 text-sm text-slate-500">
+        <div className="mt-6 rounded-2xl border border-dashed border-slate-200 bg-white/70 p-6 text-sm text-[color:var(--muted)]">
           {strings.aiPlannerEmpty}
         </div>
       ) : null}
 
-      {result ? (
-        <div className="mt-6 grid gap-5 text-sm text-slate-700">
-          <div className="rounded-2xl border border-white/70 bg-white/70 p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-              {strings.optimizedOrderLabel}
-            </p>
-            <p className="mt-2 text-slate-800">{orderedNames.join(" → ")}</p>
-          </div>
+      {!result && !isPending && locations.length >= 2 ? (
+        <div className="mt-6 rounded-2xl border border-white/70 bg-white/70 p-6 text-sm">
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--muted)]">
+            {strings.aiPlannerSubtitle}
+          </p>
+          <p className="mt-3 text-lg font-semibold text-[color:var(--foreground)]">
+            {rotatingTexts[rotateIndex]}
+          </p>
+        </div>
+      ) : null}
 
-          <div className="rounded-3xl border border-white/70 bg-white/70 p-4 sm:p-5">
-            <div className="space-y-6">
-              {timelineSteps.map((step, index) => {
-                const isLast = index === timelineSteps.length - 1;
+      {isPending ? (
+        <div className="mt-6 space-y-4">
+          <div className="skeleton h-10 w-full" />
+          <div className="skeleton h-24 w-full" />
+          <div className="skeleton h-10 w-2/3" />
+        </div>
+      ) : null}
+
+      {result ? (
+        <div className="mt-6 grid gap-5 text-sm text-[color:var(--foreground)]">
+          {routeSummary ? (
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div className="rounded-2xl border border-white/70 bg-white/70 p-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--muted)]">
+                  Start
+                </p>
+                <p className="mt-2 text-[color:var(--foreground)]">
+                  {routeSummary.start}
+                </p>
+              </div>
+              <div className="rounded-2xl border border-white/70 bg-white/70 p-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--muted)]">
+                  Stops
+                </p>
+                <p className="mt-2 text-[color:var(--foreground)]">
+                  {routeSummary.count}
+                </p>
+              </div>
+              <div className="rounded-2xl border border-white/70 bg-white/70 p-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--muted)]">
+                  End
+                </p>
+                <p className="mt-2 text-[color:var(--foreground)]">
+                  {routeSummary.end}
+                </p>
+              </div>
+            </div>
+          ) : null}
+
+          <div className="rounded-3xl border border-white/70 bg-white/70 p-4 sm:p-6">
+            <div
+              className="plan-timeline"
+              aria-label={strings.optimizedOrderLabel}
+            >
+              <span className="plan-thread" />
+              {timelineSteps.map((step) => {
                 const icon =
                   step.icon === "travel" ? (
                     <Car className="h-4 w-4" />
@@ -332,29 +447,43 @@ export const AIPlannerCard = ({
                   ) : (
                     <MapPin className="h-4 w-4" />
                   );
+                const travelMeta =
+                  step.icon === "travel" && step.distanceKm
+                    ? `${step.minutes} ${strings.minutesShort} drive • ${step.distanceKm} km`
+                    : `${step.minutes} ${strings.minutesShort}`;
 
                 return (
-                  <div key={step.id} className="relative pl-12">
-                    {!isLast && (
-                      <span className="absolute left-4 top-10 h-[calc(100%-1rem)] w-px bg-slate-200/70" />
-                    )}
-                    <span className="absolute left-0 top-2 flex h-9 w-9 items-center justify-center rounded-full border border-white/70 bg-white/90 text-emerald-700 shadow-sm">
-                      {icon}
-                    </span>
-                    <div className="flex flex-wrap items-center justify-between gap-3">
-                      <div>
-                        <p className="font-display text-base font-semibold text-slate-900">
-                          {step.title}
-                        </p>
-                        {step.subtitle ? (
-                          <p className="text-xs italic text-slate-500">
-                            {step.subtitle}
-                          </p>
+                  <div
+                    key={step.id}
+                    className={`plan-step plan-step--${step.icon}`}
+                  >
+                    <span className="plan-node">{icon}</span>
+                    <div className={`plan-card plan-card--${step.icon}`}>
+                      <div className="plan-card__header">
+                        <p className="plan-card__title">{step.title}</p>
+                        <span className="plan-card__time">
+                          <Clock className="h-3 w-3" />
+                          {step.timeLabel}
+                        </span>
+                      </div>
+                      {step.subtitle ? (
+                        <p className="plan-card__subtitle">{step.subtitle}</p>
+                      ) : null}
+                      <div className="plan-card__meta">
+                        <span className="plan-card__duration">
+                          {travelMeta}
+                        </span>
+                        {step.icon === "travel" ? (
+                          <span className="plan-card__buffer">
+                            Lankan buffer
+                          </span>
+                        ) : null}
+                        {step.icon === "visit" ? (
+                          <span className="plan-card__tip">
+                            Tip: keep 10 min for photos.
+                          </span>
                         ) : null}
                       </div>
-                      <span className="rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
-                        {step.minutes} {strings.minutesShort}
-                      </span>
                     </div>
                   </div>
                 );
@@ -363,10 +492,10 @@ export const AIPlannerCard = ({
           </div>
 
           <div className="rounded-2xl border border-white/70 bg-white/70 p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--muted)]">
               {strings.travelTimeLabel}
             </p>
-            <p className="mt-2 text-slate-800">
+            <p className="mt-2 text-[color:var(--foreground)]">
               {isTravelLoading || totalTravelMinutes === null
                 ? strings.travelLoadingLabel
                 : `${totalTravelMinutes} ${strings.minutesShort}`}
@@ -375,30 +504,32 @@ export const AIPlannerCard = ({
 
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="rounded-2xl border border-white/70 bg-white/70 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--muted)]">
                 {strings.totalTripTimeLabel}
               </p>
-              <p className="mt-2 text-slate-800">
+              <p className="mt-2 text-[color:var(--foreground)]">
                 {totalTripMinutes === null
                   ? strings.totalTripLoadingLabel
                   : `${totalTripMinutes} ${strings.minutesShort}`}
               </p>
             </div>
             <div className="rounded-2xl border border-white/70 bg-white/70 p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--muted)]">
                 {strings.bestStartTimeLabel}
               </p>
-              <p className="mt-2 text-slate-800">
+              <p className="mt-2 text-[color:var(--foreground)]">
                 {bestStartTime ?? strings.totalTripLoadingLabel}
               </p>
             </div>
           </div>
 
           <div className="rounded-2xl border border-white/70 bg-white/70 p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--muted)]">
               {strings.stayAreaLabel}
             </p>
-            <p className="mt-2 text-slate-800">{result.stayArea}</p>
+            <p className="mt-2 text-[color:var(--foreground)]">
+              {result.stayArea}
+            </p>
           </div>
         </div>
       ) : null}
